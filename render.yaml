@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: state-4500-discord-bot
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: GUILD_ID
+        value: "1522390504883617952"
+      - key: STATE_NAME
+        value: STATE 4500

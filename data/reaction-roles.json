@@ -1,0 +1,20 @@
+{
+  "panels": {
+    "event-pings": {
+      "channelId": "1522406037921992875",
+      "messageId": "1522406314905436301"
+    }
+  },
+  "mappings": {
+    "1522406314905436301": {
+      "🛡️": "SVS Ping",
+      "🏰": "Fortress Ping",
+      "⚒️": "Foundry Ping",
+      "🏔️": "Canyon Ping",
+      "🐻": "Bear Trap Ping",
+      "🧟": "Crazy Joe Ping",
+      "🎙️": "State Meeting Ping",
+      "📦": "Transfer Ping"
+    }
+  }
+}

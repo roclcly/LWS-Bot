@@ -1,0 +1,29 @@
+{
+  "name": "state-discord-builder",
+  "version": "1.0.0",
+  "description": "Idempotent Discord server builder for a Whiteout Survival state hub.",
+  "main": "scripts/setup-state-discord.js",
+  "scripts": {
+    "start": "node scripts/render-state-bot.js",
+    "dry-run": "node scripts/setup-state-discord.js --dry-run",
+    "live-dry-run": "node scripts/setup-state-discord.js --live-dry-run",
+    "apply": "node scripts/setup-state-discord.js --apply",
+    "verify-bot": "node scripts/state-verify-bot.js",
+    "verification-only": "node scripts/setup-state-verification-only.js",
+    "verification-only-apply": "node scripts/setup-state-verification-only.js --apply",
+    "ranks-diplomacy": "node scripts/setup-state-ranks-diplomacy.js",
+    "ranks-diplomacy-apply": "node scripts/setup-state-ranks-diplomacy.js --apply"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "dependencies": {
+    "discord.js": "^14.26.4",
+    "dotenv": "^17.4.2",
+    "undici": "^6.27.0"
+  },
+  "overrides": {
+    "undici": "^6.27.0"
+  }
+}

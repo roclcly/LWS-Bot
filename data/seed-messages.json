@@ -1,0 +1,130 @@
+{
+  "verify": {
+    "channelId": "1522406012064239788",
+    "messageId": "1522406014593404949"
+  },
+  "state-rules": {
+    "channelId": "1522406018489913394",
+    "messageId": "1522406022034227290"
+  },
+  "nap-rules": {
+    "channelId": "1522406024928297012",
+    "messageId": "1522406028212178984"
+  },
+  "server-map": {
+    "channelId": "1522406031857291264",
+    "messageId": "1522406035028049981"
+  },
+  "choose-roles": {
+    "channelId": "1522406037921992875",
+    "messageId": "1522406041923489963"
+  },
+  "announcements": {
+    "channelId": "1522406044754509945",
+    "messageId": "1522406050345779231"
+  },
+  "state-chat": {
+    "channelId": "1522406104997302423",
+    "messageId": "1522406110215147651"
+  },
+  "questions-help": {
+    "channelId": "1522406113281314966",
+    "messageId": "1522406116561129552"
+  },
+  "gift-codes": {
+    "channelId": "1522406119874494554",
+    "messageId": "1522406123435458603"
+  },
+  "screenshots": {
+    "channelId": "1522406126296109210",
+    "messageId": "1522406129634640052"
+  },
+  "campfire": {
+    "channelId": "1522406132436570292",
+    "messageId": "1522406135494082750"
+  },
+  "state-calendar": {
+    "channelId": "1522406141794062438",
+    "messageId": "1522406145203900518"
+  },
+  "svs-planning": {
+    "channelId": "1522406148643225623",
+    "messageId": "1522406151751204985"
+  },
+  "fortress-planning": {
+    "channelId": "1522406155429744740",
+    "messageId": "1522406159007350854"
+  },
+  "targets-scouts": {
+    "channelId": "1522406162161733682",
+    "messageId": "1522406164661407815"
+  },
+  "shield-alerts": {
+    "channelId": "1522406167765323838",
+    "messageId": "1522406170784956476"
+  },
+  "battle-reports": {
+    "channelId": "1522406173301669969",
+    "messageId": "1522406178318061658"
+  },
+  "alliance-reps": {
+    "channelId": "1522406184320110612",
+    "messageId": "1522406186782298174"
+  },
+  "diplomacy": {
+    "channelId": "1522406190997573726",
+    "messageId": "1522406197620117634"
+  },
+  "transfer-requests": {
+    "channelId": "1522406200753393884",
+    "messageId": "1522406203676823613"
+  },
+  "recruitment-board": {
+    "channelId": "1522406207627854006",
+    "messageId": "1522406210748551279"
+  },
+  "guide-index": {
+    "channelId": "1522406217010516000",
+    "messageId": "1522406220181278770"
+  },
+  "svs-guide": {
+    "channelId": "1522406223306031225",
+    "messageId": "1522406227051679774"
+  },
+  "fortress-guide": {
+    "channelId": "1522406230306324552",
+    "messageId": "1522406233544327218"
+  },
+  "nap-guide": {
+    "channelId": "1522406236715487232",
+    "messageId": "1522406240209207517"
+  },
+  "transfer-guide": {
+    "channelId": "1522406243371847682",
+    "messageId": "1522406246110462074"
+  },
+  "growth-guide": {
+    "channelId": "1522406249482944532",
+    "messageId": "1522406252242796701"
+  },
+  "governor-council": {
+    "channelId": "1522406258597036113",
+    "messageId": "1522406261403029707"
+  },
+  "mod-log": {
+    "channelId": "1522406264628318281",
+    "messageId": "1522406267967115375"
+  },
+  "reports": {
+    "channelId": "1522406271892852838",
+    "messageId": "1522406274917077083"
+  },
+  "rule-enforcement": {
+    "channelId": "1522406279673286706",
+    "messageId": "1522406283129651322"
+  },
+  "bot-admin": {
+    "channelId": "1522406286199754913",
+    "messageId": "1522406289169187007"
+  }
+}
