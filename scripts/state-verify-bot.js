@@ -15,6 +15,20 @@ const DATA_DIR = path.join(__dirname, '..', 'data');
 const REACTION_PATH = path.join(DATA_DIR, 'reaction-roles.json');
 const VERIFY_PATH = path.join(DATA_DIR, 'verification.json');
 const VERIFY_MULTI_PATH = path.join(DATA_DIR, 'verification-guilds.json');
+const DEFAULT_CLEANUP_EXEMPT_USERNAMES = ['roclcly'];
+
+function envList(name) {
+  return String(process.env[name] || '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean);
+}
+
+const CLEANUP_EXEMPT_USER_IDS = new Set(envList('VERIFY_CLEANUP_EXEMPT_USER_IDS'));
+const CLEANUP_EXEMPT_USERNAMES = new Set(
+  [...DEFAULT_CLEANUP_EXEMPT_USERNAMES, ...envList('VERIFY_CLEANUP_EXEMPT_USERNAMES')]
+    .map((value) => value.toLowerCase()),
+);
 
 function readJson(filePath, fallback) {
   try {
@@ -182,6 +196,8 @@ async function cleanVerificationMessage(message) {
   const verification = verificationForGuild(message.guild.id);
   if (!verification.channelId || message.channel.id !== verification.channelId) return;
   if (message.id === verification.messageId) return;
+  if (CLEANUP_EXEMPT_USER_IDS.has(message.author.id)) return;
+  if (CLEANUP_EXEMPT_USERNAMES.has(message.author.username.toLowerCase())) return;
   deleteSoon(message);
 }
 async function registerCommands(client) {
