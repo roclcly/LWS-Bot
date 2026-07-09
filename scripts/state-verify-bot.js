@@ -252,6 +252,10 @@ async function main() {
   client.on('messageCreate', (message) => {
     cleanVerificationMessage(message).catch((error) => console.error(`[verify-cleanup] failed: ${error.stack || error.message}`));
   });
+  client.on('error', (error) => console.error(`[state-bot] client error: ${error.stack || error.message}`));
+  client.on('shardError', (error) => console.error(`[state-bot] shard error: ${error.stack || error.message}`));
+  client.on('warn', (message) => console.warn(`[state-bot] warning: ${message}`));
+  console.log('[state-bot] logging in to Discord...');
   await client.login(process.env.DISCORD_TOKEN);
 }
 main().catch((error) => {
