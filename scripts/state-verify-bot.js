@@ -67,14 +67,16 @@ async function ensureAllianceRole(guild, tag) {
   const existing = await roleByName(guild, tag);
   if (existing) return existing;
   await guild.members.fetchMe();
-  const botHighest = guild.members.me.roles.highest.position;
+  const managedBotRole = guild.roles.cache.find((role) => role.managed && role.tags?.botId === guild.client.user.id)
+    || guild.roles.cache.find((role) => role.managed && role.name === guild.members.me.displayName);
+  const targetPosition = managedBotRole ? managedBotRole.position - 1 : guild.members.me.roles.highest.position - 1;
   return guild.roles.create({
     name: tag,
     color: 0x9bd7ff,
     mentionable: false,
     reason: `Create alliance role from ${STATE_NAME} verification`,
   }).then(async (role) => {
-    await role.setPosition(Math.max(1, botHighest - 1)).catch(() => {});
+    await role.setPosition(Math.max(1, targetPosition)).catch(() => {});
     return role;
   });
 }
