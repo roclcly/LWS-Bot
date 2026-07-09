@@ -142,54 +142,44 @@ async function verifyInteraction(interaction) {
     await finishInteraction(interaction, 'Verified role is missing. Please contact state staff.');
     return;
   }
-  const allianceRole = await ensureAllianceRole(guild, alliance);
   const nickname = `[${alliance}] ${username}`;
+  const warnings = [];
 
-  const nicked = await member.setNickname(nickname, `${STATE_NAME} verification`).then(() => true).catch(async (error) => {
-    console.warn(`[verify] nickname failed for ${member.user.tag}: ${error.message}`);
-    await finishInteraction(interaction, 'I could not change your nickname. This usually means your role is above the bot.');
-    return false;
-  });
-  if (!nicked) return;
-
-  if (!canAssignRole(guild, verifiedRole)) {
-    await finishInteraction(
-      interaction,
-      `I changed your nickname to **${nickname}**, but I cannot grant **${verifiedRole.name}** because that role is above my highest role (**${guild.members.me.roles.highest.name}**). Move my highest bot role above **${verifiedRole.name}** in Server Settings > Roles.`,
-    );
-    return;
-  }
-
-  const verifiedGranted = await member.roles.add(verifiedRole, `${STATE_NAME} verification`).then(() => true).catch(async (error) => {
+  const verifiedGranted = await member.roles.add(verifiedRole, `${STATE_NAME} verification`).then(() => true).catch((error) => {
     console.warn(`[verify] role grant failed for ${member.user.tag}: ${error.message}`);
-    await finishInteraction(
-      interaction,
-      `I changed your nickname to **${nickname}**, but I could not grant **${verifiedRole.name}**. Move my highest bot role (**${guild.members.me.roles.highest.name}**) above **${verifiedRole.name}** in Server Settings > Roles.`,
-    );
+    warnings.push(`I could not grant **${verifiedRole.name}**. Move my highest bot role (**${guild.members.me.roles.highest.name}**) above **${verifiedRole.name}** in Server Settings > Roles.`);
     return false;
   });
-  if (!verifiedGranted) return;
 
-  if (!canAssignRole(guild, allianceRole)) {
-    await finishInteraction(
-      interaction,
-      `Verified as **${nickname}** and granted **${verifiedRole.name}**. I could not grant **${allianceRole.name}** because it is above my highest role (**${guild.members.me.roles.highest.name}**). Move **${allianceRole.name}** below my bot role if you want alliance tags assigned automatically.`,
-    );
-    return;
+  const nicked = await member.setNickname(nickname, `${STATE_NAME} verification`).then(() => true).catch((error) => {
+    console.warn(`[verify] nickname failed for ${member.user.tag}: ${error.message}`);
+    warnings.push('I could not change your nickname. This usually means your role is above the bot.');
+    return false;
+  });
+
+  let allianceRole = null;
+  let allianceGranted = false;
+  try {
+    allianceRole = await ensureAllianceRole(guild, alliance);
+    allianceGranted = await member.roles.add(allianceRole, `${STATE_NAME} verification`).then(() => true).catch((error) => {
+      console.warn(`[verify] alliance role grant failed for ${member.user.tag}: ${error.message}`);
+      warnings.push(`I could not grant **${allianceRole.name}**. Move **${allianceRole.name}** below my highest bot role (**${guild.members.me.roles.highest.name}**) if you want alliance tags assigned automatically.`);
+      return false;
+    });
+  } catch (error) {
+    console.warn(`[verify] alliance role create failed for ${member.user.tag}: ${error.message}`);
+    warnings.push(`I could not create or find the **${alliance}** alliance role.`);
   }
 
-  const allianceGranted = await member.roles.add(allianceRole, `${STATE_NAME} verification`).then(() => true).catch(async (error) => {
-    console.warn(`[verify] alliance role grant failed for ${member.user.tag}: ${error.message}`);
-    await finishInteraction(
-      interaction,
-      `Verified as **${nickname}** and granted **${verifiedRole.name}**. I could not grant **${allianceRole.name}**. Move **${allianceRole.name}** below my highest bot role (**${guild.members.me.roles.highest.name}**) if you want alliance tags assigned automatically.`,
-    );
-    return false;
-  });
-  if (!allianceGranted) return;
-
-  await finishInteraction(interaction, `Verified as **${nickname}**. You now have ${verifiedRole.name} and ${allianceRole.name}.`);
-  console.log(`[verify] ${member.user.tag} -> ${nickname}`);
+  const granted = [
+    verifiedGranted ? verifiedRole.name : null,
+    allianceGranted && allianceRole ? allianceRole.name : null,
+  ].filter(Boolean);
+  const nameStatus = nicked ? `Verified as **${nickname}**.` : `Verification processed for **${username}**.`;
+  const roleStatus = granted.length ? ` You now have ${granted.join(' and ')}.` : '';
+  const warningStatus = warnings.length ? `\n\n${warnings.join('\n')}` : '';
+  await finishInteraction(interaction, `${nameStatus}${roleStatus}${warningStatus}`);
+  console.log(`[verify] ${member.user.tag} -> ${nickname}; verified=${verifiedGranted}; alliance=${allianceGranted}`);
 }
 async function cleanVerificationMessage(message) {
   if (!message.guild) return;
