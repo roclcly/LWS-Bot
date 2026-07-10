@@ -3,18 +3,27 @@
     "event-pings": {
       "channelId": "1522406037921992875",
       "messageId": "1522406314905436301"
+    },
+    "state-4500-choose-roles": {
+      "guildId": "1522822988146278430",
+      "channelId": "1524945284055044169",
+      "messageId": "1525020653227610122"
     }
   },
   "mappings": {
-    "1522406314905436301": {
+    "1525020653227610122": {
       "🛡️": "SVS Ping",
       "🏰": "Fortress Ping",
       "⚒️": "Foundry Ping",
-      "🏔️": "Canyon Ping",
+      "⛰️": "Canyon Ping",
       "🐻": "Bear Trap Ping",
       "🧟": "Crazy Joe Ping",
       "🎙️": "State Meeting Ping",
-      "📦": "Transfer Ping"
+      "📦": "Transfer Ping",
+      "🌐": "UTC",
+      "🌎": "NA Timezone",
+      "🌍": "EU Timezone",
+      "🌏": "AU / Asia Timezone"
     }
   }
 }
