@@ -17,7 +17,7 @@ const DATA_DIR = path.join(__dirname, '..', 'data');
 const REACTION_PATH = path.join(DATA_DIR, 'reaction-roles.json');
 const VERIFY_PATH = path.join(DATA_DIR, 'verification.json');
 const VERIFY_MULTI_PATH = path.join(DATA_DIR, 'verification-guilds.json');
-const DEFAULT_CLEANUP_EXEMPT_USERNAMES = ['roclcly'];
+const DEFAULT_CLEANUP_EXEMPT_USERNAMES = [];
 
 function envList(name) {
   return String(process.env[name] || '')
