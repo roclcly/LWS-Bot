@@ -121,31 +121,11 @@ async function toggleReactionRole(reaction, user, action) {
     console.log(`[reaction] removed ${role.name} from ${user.tag}`);
   }
 }
-async function verifyInteraction(interaction) {
-  if (!interaction.isChatInputCommand() || interaction.commandName !== 'verify') return;
-
-  const verification = verificationForGuild(interaction.guildId);
-  if (verification.channelId && interaction.channelId !== verification.channelId) {
-    await finishInteraction(interaction, `Please verify in <#${verification.channelId}>.`);
-    return;
-  }
-
-  const username = cleanName(interaction.options.getString('username', true));
-  const alliance = cleanAlliance(interaction.options.getString('alliance', true));
-  if (!username || !alliance) {
-    await finishInteraction(interaction, 'Use a valid WOS username and an alliance tag of 2-8 letters/numbers.');
-    return;
-  }
-
-  await interaction.deferReply({ ephemeral: true });
-  const guild = interaction.guild;
-  const member = interaction.member;
+async function runVerification(guild, member, username, alliance, grantRoleName) {
   await guild.members.fetchMe();
-  const verifiedRole = await roleByName(guild, verification.grantRoleName || 'Verified State Member');
-  if (!verifiedRole) {
-    await finishInteraction(interaction, 'Verified role is missing. Please contact state staff.');
-    return;
-  }
+  const verifiedRole = await roleByName(guild, grantRoleName || 'Verified State Member');
+  if (!verifiedRole) return 'Verified role is missing. Please contact state staff.';
+
   const nickname = `[${alliance}] ${username}`;
   const warnings = [];
 
@@ -157,7 +137,7 @@ async function verifyInteraction(interaction) {
 
   const nicked = await member.setNickname(nickname, `${STATE_NAME} verification`).then(() => true).catch((error) => {
     console.warn(`[verify] nickname failed for ${member.user.tag}: ${error.message}`);
-    warnings.push('I could not change your nickname. This usually means your role is above the bot.');
+    warnings.push('I could not change the nickname. This usually means that member has a role above the bot.');
     return false;
   });
 
@@ -182,8 +162,37 @@ async function verifyInteraction(interaction) {
   const nameStatus = nicked ? `Verified as **${nickname}**.` : `Verification processed for **${username}**.`;
   const roleStatus = granted.length ? ` You now have ${granted.join(' and ')}.` : '';
   const warningStatus = warnings.length ? `\n\n${warnings.join('\n')}` : '';
-  await finishInteraction(interaction, `${nameStatus}${roleStatus}${warningStatus}`);
   console.log(`[verify] ${member.user.tag} -> ${nickname}; verified=${verifiedGranted}; alliance=${allianceGranted}`);
+  return `${nameStatus}${roleStatus}${warningStatus}`;
+}
+async function verifyInteraction(interaction) {
+  if (!interaction.isChatInputCommand() || !['verify', 'manual-verify'].includes(interaction.commandName)) return;
+
+  await interaction.deferReply({ ephemeral: true });
+
+  const verification = verificationForGuild(interaction.guildId);
+  if (verification.channelId && interaction.channelId !== verification.channelId) {
+    await finishInteraction(interaction, `Please verify in <#${verification.channelId}>.`);
+    return;
+  }
+
+  const guild = interaction.guild;
+  const member = interaction.commandName === 'manual-verify'
+    ? await guild.members.fetch(interaction.options.getUser('user', true).id).catch(() => null)
+    : interaction.member;
+  if (!member) {
+    await finishInteraction(interaction, 'I could not find that server member.');
+    return;
+  }
+
+  const username = cleanName(interaction.options.getString('username', true));
+  const alliance = cleanAlliance(interaction.options.getString('alliance', true));
+  if (!username || !alliance) {
+    await finishInteraction(interaction, 'Use a valid WOS username and an alliance tag of 2-8 letters/numbers.');
+    return;
+  }
+
+  await finishInteraction(interaction, await runVerification(guild, member, username, alliance, verification.grantRoleName));
 }
 async function cleanVerificationMessage(message) {
   if (!message.guild) return;
@@ -199,16 +208,23 @@ async function registerCommands(client) {
   const guildIds = new Set(Object.keys(multi.guilds || {}));
   if (process.env.GUILD_ID) guildIds.add(process.env.GUILD_ID);
   if (!guildIds.size) return;
-  const command = new SlashCommandBuilder()
+  const verifyCommand = new SlashCommandBuilder()
     .setName('verify')
     .setDescription(`Verify for ${STATE_NAME}.`)
     .addStringOption((option) => option.setName('username').setDescription('Your exact WOS username').setRequired(true))
     .addStringOption((option) => option.setName('alliance').setDescription('Your alliance tag, e.g. LWS').setRequired(true));
+  const manualCommand = new SlashCommandBuilder()
+    .setName('manual-verify')
+    .setDescription('Verify another member manually.')
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles)
+    .addUserOption((option) => option.setName('user').setDescription('Member to verify').setRequired(true))
+    .addStringOption((option) => option.setName('username').setDescription('Their exact WOS username').setRequired(true))
+    .addStringOption((option) => option.setName('alliance').setDescription('Their alliance tag, e.g. LWS').setRequired(true));
   for (const guildId of guildIds) {
     const guild = await client.guilds.fetch(guildId).catch(() => null);
     if (!guild) continue;
-    await guild.commands.create(command);
-    console.log(`[verify] /verify command registered in ${guild.name}`);
+    await guild.commands.set([verifyCommand, manualCommand]);
+    console.log(`[verify] /verify and /manual-verify commands registered in ${guild.name}`);
   }
 }
 async function tryGrantAdmin(client) {
